@@ -19,12 +19,6 @@ pipeline {
             }
         }
 
-        stage('Run Java') {
-            steps {
-                bat 'java -cp app app'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t %DOCKER_IMAGE% .'
@@ -43,6 +37,13 @@ pipeline {
                     docker push %DOCKER_IMAGE%
                     '''
                 }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                bat 'kubectl apply -f kubernetes\\deployment.yaml'
+                bat 'kubectl apply -f kubernetes\\service.yaml'
             }
         }
     }
